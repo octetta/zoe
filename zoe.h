@@ -20,6 +20,7 @@ typedef struct {
 
 typedef struct {
     FILE *mem;
+    char is_mz_file;
     int size;
     unsigned char *buf;
 } zoe_file_t;

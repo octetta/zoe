@@ -51,14 +51,16 @@ zoe_file_t *zoe_fopen_at(zoe_t *zoe, int i) {
         zoe_file_t *zfile = NULL;
         zfile = malloc(sizeof(zoe_file_t));
         if (zfile) {
+            zfile->is_mz_file = 0;
             unsigned char *buf = malloc(size);
             if (buf) {
                 int s = mz_zip_reader_extract_to_mem(&zoe->zip, i, buf, size, 0);
                 FILE *mem = fmemopen(buf, size, "r");
                 if (mem) {
+                    zfile->mem = mem;
+                    zfile->is_mz_file = 1;
                     zfile->size = size;
                     zfile->buf = buf;
-                    zfile->mem = mem;
                     return zfile;
                 }
                 free(buf);
