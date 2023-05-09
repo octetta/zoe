@@ -19,10 +19,13 @@ typedef struct {
 } zoe_t;
 
 typedef struct {
+    FILE *mem;
     int size;
     unsigned char *buf;
-    FILE *mem;
 } zoe_file_t;
+
+#define ZOE_FILE(z) (z->mem)
+#define ZOE_FILE_SIZE(z) (z->size)
 
 char *zoe_self(char *a0);
 char *zoe_error(int r);

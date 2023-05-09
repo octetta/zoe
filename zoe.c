@@ -24,6 +24,7 @@ char *zoe_error(int r) {
     return "UNEXPECTED";
 }
 
+// user needs to free the returned non-NULL name after use
 char *zoe_self(char *a0) {
     char *avn = (char *)getauxval(AT_EXECFN);
     // char *path;
@@ -31,7 +32,6 @@ char *zoe_self(char *a0) {
     // on macOS, _NSGetExecutablePath(path, &size)
     char name[PATH_MAX];
     if (realpath(avn, name)) {
-        printf("# name = %s\n", name);
         return strdup(name);
     }
     return NULL;

@@ -18,23 +18,23 @@ int main(int argc, char *argv[]) {
     int r = zoe_find(zip, which);
     if (r >= 0) {
         printf("# reading from %s in attached archive\n", which);
-        zoe_file_t *mem = zoe_fopen_at(zip, r);
-        if (mem) {
-            printf("(size=%d)\n", mem->size);
+        zoe_file_t *file = zoe_fopen_at(zip, r);
+        if (file) {
+            printf("(size=%d)\n", ZOE_FILE_SIZE(file));
             char line[1024];
             int i = 0;
             char mode = 0; // text
             // scan first n-bytes of file and decide if we
             // should dump line-by-line or as hexdump
             while (1) {
-                char *s = fgets(line, sizeof(line), mem->mem);
+                char *s = fgets(line, sizeof(line), ZOE_FILE(file));
                 if (s == NULL) break;
                 line[strcspn(line, "\r\n")] = '\0';
                 printf("[%d] {%s}\n", i, line);
                 i++;
             }
             printf("# read %d lines\n", i);
-            zoe_fclose(mem);
+            zoe_fclose(file);
         }
     }
     zoe_close(zip);
