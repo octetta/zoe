@@ -1,2 +1,2 @@
-# zoe
+# zoe = zip-on-executable
 What I've learned on the topic of appending a zip file to binaries...
