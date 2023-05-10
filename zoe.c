@@ -45,17 +45,21 @@ int zoe_find(zoe_t *zoe, char *name) {
     return ZOE_CANT_FIND;
 }
 
+zoe_file_t *zoe_file_new(void) {
+    zoe_file_t *zfile = NULL;
+    return malloc(sizeof(zoe_file_t));
+}
+
 zoe_file_t *zoe_fopen_at(zoe_t *zoe, int i) {
     if (zoe && zoe->r == ZOE_OK && i >= 0) {
         int size = zoe_size_at(zoe, i);
-        zoe_file_t *zfile = NULL;
-        zfile = malloc(sizeof(zoe_file_t));
+        zoe_file_t *zfile = zoe_file_new();
         if (zfile) {
             zfile->is_mz_file = 0;
             unsigned char *buf = malloc(size);
             if (buf) {
                 int s = mz_zip_reader_extract_to_mem(&zoe->zip, i, buf, size, 0);
-                FILE *mem = fmemopen(buf, size, "r");
+                FILE *mem = fmemopen(buf, size, "rb");
                 if (mem) {
                     zfile->mem = mem;
                     zfile->is_mz_file = 1;
@@ -66,6 +70,25 @@ zoe_file_t *zoe_fopen_at(zoe_t *zoe, int i) {
                 free(buf);
             }
         }
+    }
+    return NULL;
+}
+
+zoe_file_t *zoe_fopen(zoe_t *zoe, char *name) {
+    int i = zoe_find(zoe, name);
+    if (i >= 0) {
+        return zoe_fopen_at(zoe, i);
+    } else {
+        FILE *f = fopen(name, "rb");
+        if (f) {
+            zoe_file_t *zfile = zoe_file_new();
+            if (zfile) {
+                zfile->mem = f;
+                zfile->is_mz_file == 0;
+                return zfile;
+            }
+        }
+        return NULL;
     }
     return NULL;
 }
