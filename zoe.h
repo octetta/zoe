@@ -37,6 +37,7 @@ int zoe_find(zoe_t *zoe, char *name);
 int zoe_info_at(zoe_t *zoe, int i);
 int zoe_size_at(zoe_t *zoe, int i);
 char *zoe_name_at(zoe_t *zoe, int i);
+zoe_file_t *zoe_file_new(void);
 zoe_file_t *zoe_fopen_at(zoe_t *zoe, int i);
 zoe_file_t *zoe_fopen(zoe_t *zoe, char *name);
 void zoe_fclose(zoe_file_t *zfile);

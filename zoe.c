@@ -46,8 +46,12 @@ int zoe_find(zoe_t *zoe, char *name) {
 }
 
 zoe_file_t *zoe_file_new(void) {
-    zoe_file_t *zfile = NULL;
-    return malloc(sizeof(zoe_file_t));
+    zoe_file_t *zfile = malloc(sizeof(zoe_file_t));
+    if (zfile) {
+        memset(zfile, 0, sizeof(zoe_file_t));
+        return zfile;
+    }
+    return NULL;
 }
 
 zoe_file_t *zoe_fopen_at(zoe_t *zoe, int i) {
@@ -85,10 +89,11 @@ zoe_file_t *zoe_fopen(zoe_t *zoe, char *name) {
             if (zfile) {
                 zfile->mem = f;
                 zfile->is_mz_file == 0;
+                zfile->size = 0;
+                zfile->buf = NULL;
                 return zfile;
             }
         }
-        return NULL;
     }
     return NULL;
 }
