@@ -2,8 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#if __APPLE__
+//
+#else
 #include <sys/auxv.h>
-
+#endif
 #include "miniz.h"
 
 #include "zoe.h"
@@ -26,10 +29,15 @@ char *zoe_error(int r) {
 
 // user needs to free the returned non-NULL name after use
 char *zoe_self(char *a0) {
+    printf("# a0=%s\n", a0);
+#if __APPLE__
+    char avn[1024];
+    uint32_t size = sizeof(avn);
+    int r = _NSGetExecutablePath(avn, &size);
+    //printf("r=%d size=%d avn=%s\n", r, size, avn);
+#else
     char *avn = (char *)getauxval(AT_EXECFN);
-    // char *path;
-    // uint32_t size;
-    // on macOS, _NSGetExecutablePath(path, &size)
+#endif
     char name[PATH_MAX];
     if (realpath(avn, name)) {
         return strdup(name);
@@ -88,7 +96,7 @@ zoe_file_t *zoe_fopen(zoe_t *zoe, char *name) {
             zoe_file_t *zfile = zoe_file_new();
             if (zfile) {
                 zfile->mem = f;
-                zfile->is_mz_file == 0;
+                zfile->is_mz_file = 0;
                 zfile->size = 0;
                 zfile->buf = NULL;
                 return zfile;
@@ -154,8 +162,8 @@ int zoe_info_at(zoe_t *zoe, int i) {
     printf("[%d] -> %s / uncomp-size=%d / comp-size=%d / is-directory=%d\n",
         i,
         file_stat.m_filename,
-        file_stat.m_uncomp_size,
-        file_stat.m_comp_size,
+        (int)file_stat.m_uncomp_size,
+        (int)file_stat.m_comp_size,
         file_stat.m_is_directory
     );
     return -1;
@@ -287,7 +295,7 @@ zoe_t *zoe_open(char *zipname) {
         if (debug) printf("[%d] -> %s (%d)\n",
             i,
             file_stat.m_filename,
-            file_stat.m_uncomp_size
+            (int)file_stat.m_uncomp_size
         );
 
     }
