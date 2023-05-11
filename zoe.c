@@ -29,7 +29,7 @@ char *zoe_error(int r) {
 
 // user needs to free the returned non-NULL name after use
 char *zoe_self(char *a0) {
-    printf("# a0=%s\n", a0);
+    // printf("# a0=%s\n", a0);
 #if __APPLE__
     char avn[1024];
     uint32_t size = sizeof(avn);
